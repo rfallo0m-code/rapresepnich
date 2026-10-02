@@ -1,0 +1,993 @@
+```html
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rapresepnich - Portal Resep Makanan & Minuman Viral</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff8f1',
+                            100: '#feecdc',
+                            500: '#f97316', // Vibrant Warm Orange
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            dark: '#1c1917', // Dark Charcoal
+                            cream: '#fdfbf7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #292524;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .tab-content {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- WordPress Top Bar Simulation -->
+    <div class="bg-brand-dark text-gray-300 text-xs py-1 px-4 flex justify-between items-center z-50">
+        <div class="flex items-center space-x-3">
+            <span><i class="fa-brands fa-wordpress text-brand-500 mr-1"></i> Mode Simulasi WordPress 6.5</span>
+            <span class="hidden md:inline text-gray-500">|</span>
+            <span class="hidden md:inline">Tema: <strong class="text-white">RapResep-Theme v2.0</strong></span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="bg-brand-600 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Gutenberg Ready</span>
+        </div>
+    </div>
+
+    <!-- Main Header / Navigation -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-orange-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="switchTab('beranda')">
+                    <div class="w-11 h-11 bg-gradient-to-tr from-brand-600 to-brand-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30 transform -rotate-3 hover:rotate-0 transition-all duration-300">
+                        <i class="fa-solid fa-utensils text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-2xl font-extrabold text-brand-dark tracking-tight">rapresep<span class="text-brand-500">nich</span></span>
+                        <span class="block text-[10px] text-gray-400 -mt-1 font-sans font-medium uppercase tracking-widest">Sajian Kuliner Viral</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-1 bg-brand-50 p-1.5 rounded-full border border-orange-100">
+                    <button onclick="switchTab('beranda')" id="nav-beranda" class="nav-btn px-6 py-2 rounded-full font-medium text-sm transition-all duration-300 bg-brand-500 text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-house mr-1.5 text-xs"></i> Beranda
+                    </button>
+                    <button onclick="switchTab('resep')" id="nav-resep" class="nav-btn px-6 py-2 rounded-full font-medium text-sm transition-all duration-300 text-gray-600 hover:text-brand-600 hover:bg-white/50">
+                        <i class="fa-solid fa-fire mr-1.5 text-xs text-orange-500"></i> Resep Viral '26
+                    </button>
+                    <button onclick="switchTab('kategori')" id="nav-kategori" class="nav-btn px-6 py-2 rounded-full font-medium text-sm transition-all duration-300 text-gray-600 hover:text-brand-600 hover:bg-white/50">
+                        <i class="fa-solid fa-layer-group mr-1.5 text-xs"></i> Kategori
+                    </button>
+                    <button onclick="switchTab('about')" id="nav-about" class="nav-btn px-6 py-2 rounded-full font-medium text-sm transition-all duration-300 text-gray-600 hover:text-brand-600 hover:bg-white/50">
+                        <i class="fa-solid fa-circle-info mr-1.5 text-xs"></i> Tentang Kami
+                    </button>
+                </nav>
+
+                <!-- Search Quick Icon & Bookmark Button -->
+                <div class="hidden lg:flex items-center space-x-3">
+                    <button onclick="switchTab('resep')" class="bg-brand-50 text-brand-600 hover:bg-brand-100 p-2.5 rounded-full transition-colors">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <a href="#gutenberg-info" class="text-xs font-semibold bg-gray-900 text-white px-4 py-2.5 rounded-xl hover:bg-gray-800 transition shadow-sm flex items-center space-x-1">
+                        <i class="fa-brands fa-wordpress text-sm mr-1"></i>
+                        <span>Gutenberg Code</span>
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-gray-700 hover:text-brand-600 p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-4 space-y-2 transition-all">
+            <button onclick="switchTab('beranda'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-orange-50 hover:text-brand-600 flex items-center">
+                <i class="fa-solid fa-house w-6"></i> Beranda
+            </button>
+            <button onclick="switchTab('resep'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-orange-50 hover:text-brand-600 flex items-center">
+                <i class="fa-solid fa-fire w-6 text-orange-500"></i> Resep Viral 2026
+            </button>
+            <button onclick="switchTab('kategori'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-orange-50 hover:text-brand-600 flex items-center">
+                <i class="fa-solid fa-layer-group w-6"></i> Kategori Menu
+            </button>
+            <button onclick="switchTab('about'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-orange-50 hover:text-brand-600 flex items-center">
+                <i class="fa-solid fa-circle-info w-6"></i> Tentang Kami
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow">
+
+        <!-- TAB 1: BERANDA -->
+        <div id="tab-beranda" class="tab-content active">
+            <!-- Hero Banner -->
+            <section class="relative py-12 lg:py-20 bg-gradient-to-b from-orange-100/60 via-brand-50 to-transparent overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                            <span class="inline-flex items-center gap-2 bg-orange-200/60 text-brand-700 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Eksplorasi Rasa Kekinian
+                            </span>
+                            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brand-dark leading-tight">
+                                Temukan Inspirasi Masakan <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-amber-500">Viral & Lezat</span> Hari Ini.
+                            </h1>
+                            <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-light">
+                                Welcome to <strong class="text-brand-600 font-semibold">rapresepnich</strong>! Tempat kumpulnya para pecinta kuliner, kreasi masakan praktis, hingga jajaran tren kuliner hits tahun 2026 yang wajib kamu coba di dapurmu.
+                            </p>
+                            
+                            <!-- Search Bar Interaktif -->
+                            <div class="pt-2 max-w-xl mx-auto lg:mx-0">
+                                <div class="glass-card p-2 rounded-2xl shadow-xl flex items-center space-x-2">
+                                    <div class="pl-3 text-gray-400">
+                                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                                    </div>
+                                    <input type="text" id="home-search-input" placeholder="Cari resep: Cromboloni, Souffle, Burger Lava..." class="w-full bg-transparent px-2 py-2 text-sm text-gray-800 focus:outline-none">
+                                    <button onclick="handleHomeSearch()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm px-6 py-3 rounded-xl transition shadow-md shadow-brand-500/30 whitespace-nowrap">
+                                        Cari Resep
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2 mt-3 text-xs text-gray-500 justify-center lg:justify-start">
+                                    <span class="font-semibold">Populer:</span>
+                                    <button onclick="searchTag('Matcha')" class="hover:text-brand-600 underline">#Matcha</button>
+                                    <button onclick="searchTag('Lava')" class="hover:text-brand-600 underline">#SmashBurger</button>
+                                    <button onclick="searchTag('Mochi')" class="hover:text-brand-600 underline">#MochiMilk</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero Feature Image / Card Showcase -->
+                        <div class="lg:col-span-5 relative">
+                            <div class="relative mx-auto max-w-md lg:max-w-none">
+                                <div class="absolute -top-6 -left-6 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                                <div class="relative bg-white rounded-3xl p-4 shadow-2xl border border-orange-100 transform hover:-translate-y-1 transition duration-500">
+                                    <div class="relative h-72 rounded-2xl overflow-hidden mb-4">
+                                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80" alt="Resep Utama" class="w-full h-full object-cover">
+                                        <span class="absolute top-3 left-3 bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                                            🔥 Trending Top #1
+                                        </span>
+                                    </div>
+                                    <div class="px-2 pb-2">
+                                        <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                                            <span><i class="fa-regular fa-clock mr-1"></i> 25 Menit</span>
+                                            <span><i class="fa-solid fa-fire text-amber-500 mr-1"></i> Mudah</span>
+                                        </div>
+                                        <h3 class="font-serif text-xl font-bold text-gray-900 mb-1">Cromboloni Matcha Cheese 2026</h3>
+                                        <p class="text-xs text-gray-500 line-clamp-2">Tekstur renyah di luar, lumer melimpah dengan matcha jepang pilihan dan keju krim creamy.</p>
+                                        <button onclick="switchTab('resep'); openRecipeModal('cromboloni')" class="mt-4 w-full bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white font-semibold py-2 rounded-xl text-xs transition duration-300 text-center">
+                                            Lihat Resep Lengkap
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Recipes Grid -->
+            <section class="py-12 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <span class="text-brand-600 text-xs font-bold tracking-widest uppercase">Pilihan Editor</span>
+                            <h2 class="font-serif text-2xl sm:text-3xl font-extrabold text-brand-dark">Resep Pilihan Minggu Ini</h2>
+                        </div>
+                        <button onclick="switchTab('resep')" class="text-brand-600 hover:text-brand-700 font-semibold text-sm flex items-center gap-1 group">
+                            Lihat Semua Resep <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Card 1 -->
+                        <div class="bg-brand-cream border border-orange-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80" alt="Smash Burger Lava" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                                <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Viral 2026</span>
+                            </div>
+                            <div class="p-5">
+                                <span class="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Makanan Berat</span>
+                                <h3 class="font-serif font-bold text-lg text-gray-900 mt-1 mb-2">Smash Burger Lava Truffle</h3>
+                                <p class="text-xs text-gray-600 mb-4 line-clamp-2">Daging sapi smash gurih dengan lelehan keju mozarella lava beraroma minyak truffle mevvah.</p>
+                                <button onclick="switchTab('resep'); openRecipeModal('burger')" class="text-xs font-bold text-brand-600 hover:underline inline-flex items-center">
+                                    Baca Resep <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="bg-brand-cream border border-orange-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80" alt="Iced Coffee Cloud Foam" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                                <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Kopi Hits</span>
+                            </div>
+                            <div class="p-5">
+                                <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Minuman</span>
+                                <h3 class="font-serif font-bold text-lg text-gray-900 mt-1 mb-2">Iced Coffee Cloud Foam Sea Salt</h3>
+                                <p class="text-xs text-gray-600 mb-4 line-clamp-2">Kombinasi sempurna espresso pekat dengan busa krim rasa garam laut yang manis gurih.</p>
+                                <button onclick="switchTab('resep'); openRecipeModal('coffee')" class="text-xs font-bold text-brand-600 hover:underline inline-flex items-center">
+                                    Baca Resep <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="bg-brand-cream border border-orange-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80" alt="Souffle Pancake" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                                <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Dessert</span>
+                            </div>
+                            <div class="p-5">
+                                <span class="text-[10px] font-bold text-pink-600 uppercase tracking-wider">Manis & Soft</span>
+                                <h3 class="font-serif font-bold text-lg text-gray-900 mt-1 mb-2">Souffle Pancake Rose Gold</h3>
+                                <p class="text-xs text-gray-600 mb-4 line-clamp-2">Pancake gaya Jepang yang super mengembang lembut bak awan dengan topping sirup mawar.</p>
+                                <button onclick="switchTab('resep'); openRecipeModal('souffle')" class="text-xs font-bold text-brand-600 hover:underline inline-flex items-center">
+                                    Baca Resep <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Articles / Kitchen Tips Section -->
+            <section class="py-12 bg-brand-50/50 border-t border-orange-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="font-serif text-2xl font-bold text-brand-dark mb-6 text-center">Tips Dapur & Trik Memasak Rahasia</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-orange-100 text-brand-600 rounded-xl flex items-center justify-center shrink-0 text-xl font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 mb-1">Rahasia Pastry Super Renyah</h4>
+                                <p class="text-xs text-gray-500">Pastikan mentega dalam keadaan dingin konstan saat proses laminasi adonan cromboloni.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0 text-xl font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 mb-1">Busa Kopi Kokoh & Foam Tahan Lama</h4>
+                                <p class="text-xs text-gray-500">Gunakan heavy cream berlemak tinggi (min 35%) yang baru dikeluarkan dari kulkas.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0 text-xl font-bold">3</div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 mb-1">Mencegah Souffle Kempes</h4>
+                                <p class="text-xs text-gray-500">Kocok putih telur hingga mencapai tahap stiff peak namun jangan overbeat agar tekstur tetap lembut.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 2: RESEP VIRAL 2026 -->
+        <div id="tab-resep" class="tab-content">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Section Title -->
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="bg-red-100 text-red-600 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-fire text-red-500 mr-1"></i> Tren Kuliner 2026</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-extrabold text-brand-dark mt-2">Daftar Makanan & Minuman Viral</h2>
+                        <p class="text-gray-500 text-sm mt-2">Kumpulan resep hits yang paling dicari dan diperbincangkan di media sosial sepanjang tahun 2026.</p>
+                    </div>
+
+                    <!-- Search Filter Bar Inside Resep Page -->
+                    <div class="mb-8 max-w-md mx-auto">
+                        <div class="relative">
+                            <input type="text" id="recipe-search" oninput="filterRecipes()" placeholder="Filter resep berdasarkan nama..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-sm focus:outline-none focus:border-brand-500 shadow-sm">
+                            <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <!-- Recipes Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="recipe-card-list">
+                        <!-- Recipe Item 1 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="cromboloni matcha cheese">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="Cromboloni Matcha" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-brand-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">VIRAL #1</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 30 Menit</span>
+                                    <span><i class="fa-solid fa-fire text-orange-500"></i> Dessert</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Cromboloni Matcha Cheese 2026</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Perpaduan croissant pastry rolled melingkar bertabur matcha krim khas Kyoto dan topping keju lumer.</p>
+                                <button onclick="openRecipeModal('cromboloni')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Item 2 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="iced coffee cloud foam">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80" alt="Iced Coffee Cloud" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">HIT MINUMAN</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 10 Menit</span>
+                                    <span><i class="fa-solid fa-mug-hot text-amber-500"></i> Minuman</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Iced Coffee Cloud Foam</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Espresso berbuih halus di atas susu oat dingin dengan sentuhan sea salt cream tebal di atasnya.</p>
+                                <button onclick="openRecipeModal('coffee')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Item 3 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="mochi milk tea crunch">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=600&q=80" alt="Mochi Milk Tea" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-purple-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">TRENDING</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 15 Menit</span>
+                                    <span><i class="fa-solid fa-glass-water text-purple-500"></i> Minuman</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Mochi Milk Tea Crunch</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Minuman teh susu bobba dengan topping mochi kenyal yang disiram renyahnya biskuit karamel.</p>
+                                <button onclick="openRecipeModal('mochi')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Item 4 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="smash burger lava truffle">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80" alt="Smash Burger" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">BEST SELLER</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 20 Menit</span>
+                                    <span><i class="fa-solid fa-burger text-red-500"></i> Makanan Berat</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Smash Burger Lava Truffle</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Roti brioche lembut berpadu patis daging gepeng renyah dan lumeran saus keju lava truffle.</p>
+                                <button onclick="openRecipeModal('burger')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Item 5 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="souffle pancake rose gold">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80" alt="Souffle Pancake" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-pink-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">SWEET</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 25 Menit</span>
+                                    <span><i class="fa-solid fa-cookie text-pink-500"></i> Snack / Dessert</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Souffle Pancake Rose Gold</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Pancake souffle fluffy berbahan dasar vanila organik dengan drizzle sirup mawar dan kelopak edible gold.</p>
+                                <button onclick="openRecipeModal('souffle')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Item 6 -->
+                        <div class="recipe-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition duration-300" data-name="spicy carbonara ramen roll">
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80" alt="Ramen Roll" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase">NEW 2026</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+                                    <span><i class="fa-solid fa-clock"></i> 15 Menit</span>
+                                    <span><i class="fa-solid fa-pepper-hot text-red-500"></i> Pedas Gurih</span>
+                                </div>
+                                <h3 class="font-serif font-bold text-xl text-brand-dark mb-2">Spicy Carbonara Ramen Roll</h3>
+                                <p class="text-gray-500 text-xs mb-4 line-clamp-2">Mie ramen pedas ala Korea dibungkus rice paper transparan dengan isian keju mozarella meleleh.</p>
+                                <button onclick="openRecipeModal('ramen')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils"></i> Lihat Bahan & Cara Buat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 3: KATEGORI -->
+        <div id="tab-kategori" class="tab-content">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-layer-group mr-1"></i> Navigasi Kuliner</span>
+                        <h2 class="font-serif text-3xl font-extrabold text-brand-dark mt-2">Pilih Kategori Menu</h2>
+                        <p class="text-gray-500 text-sm mt-1">Jelajahi sajian berdasarkan selera dan kebutuhan memasakmu.</p>
+                    </div>
+
+                    <!-- Category Buttons Filter -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-10">
+                        <button onclick="filterCategory('all')" class="cat-filter-btn active-cat bg-brand-500 text-white px-5 py-2 rounded-xl text-xs font-semibold transition shadow-sm">
+                            Semua Menu
+                        </button>
+                        <button onclick="filterCategory('berat')" class="cat-filter-btn bg-white text-gray-700 hover:bg-orange-50 border border-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-bowl-food mr-1 text-orange-500"></i> Makanan Berat
+                        </button>
+                        <button onclick="filterCategory('snack')" class="cat-filter-btn bg-white text-gray-700 hover:bg-orange-50 border border-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-cookie-bite mr-1 text-amber-500"></i> Makanan Ringan / Snack
+                        </button>
+                        <button onclick="filterCategory('minuman')" class="cat-filter-btn bg-white text-gray-700 hover:bg-orange-50 border border-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-glass-water mr-1 text-blue-500"></i> Minuman Viral
+                        </button>
+                        <button onclick="filterCategory('desserts')" class="cat-filter-btn bg-white text-gray-700 hover:bg-orange-50 border border-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-ice-cream mr-1 text-pink-500"></i> Desserts
+                        </button>
+                        <button onclick="filterCategory('praktis')" class="cat-filter-btn bg-white text-gray-700 hover:bg-orange-50 border border-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-bolt mr-1 text-emerald-500"></i> Praktis 10 Menit
+                        </button>
+                    </div>
+
+                    <!-- Filtered Content Showcase -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="category-items">
+                        <!-- Item Berat -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="berat">
+                            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Burger">
+                            <div>
+                                <span class="text-[10px] font-bold text-orange-500 uppercase">Makanan Berat</span>
+                                <h4 class="font-bold text-sm text-gray-900">Smash Burger Lava Truffle</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">20 Menit • Porsi Kenyang</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Minuman -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="minuman praktis">
+                            <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Coffee">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-500 uppercase">Minuman Viral</span>
+                                <h4 class="font-bold text-sm text-gray-900">Iced Coffee Cloud Foam</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">10 Menit • Segar</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Desserts -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="desserts snack">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Cromboloni">
+                            <div>
+                                <span class="text-[10px] font-bold text-pink-500 uppercase">Dessert</span>
+                                <h4 class="font-bold text-sm text-gray-900">Cromboloni Matcha Cheese</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">30 Menit • Manis & Creamy</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Minuman 2 -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="minuman desserts">
+                            <img src="https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Mochi Milk">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-500 uppercase">Minuman Viral</span>
+                                <h4 class="font-bold text-sm text-gray-900">Mochi Milk Tea Crunch</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">15 Menit • Toping Kenyal</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Desserts 2 -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="desserts snack">
+                            <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Souffle">
+                            <div>
+                                <span class="text-[10px] font-bold text-pink-500 uppercase">Dessert</span>
+                                <h4 class="font-bold text-sm text-gray-900">Souffle Pancake Rose Gold</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">25 Menit • Lembut</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Praktis / Snack -->
+                        <div class="cat-card bg-white p-4 rounded-2xl border border-gray-100 flex space-x-4 items-center shadow-sm" data-category="snack praktis berat">
+                            <img src="https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=200&q=80" class="w-20 h-20 rounded-xl object-cover" alt="Ramen Roll">
+                            <div>
+                                <span class="text-[10px] font-bold text-emerald-500 uppercase">Praktis 10 Menit</span>
+                                <h4 class="font-bold text-sm text-gray-900">Spicy Carbonara Ramen Roll</h4>
+                                <p class="text-[11px] text-gray-500 mt-1">15 Menit • Pedas Gurih</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 4: ABOUT (TENTANG KAMI) -->
+        <div id="tab-about" class="tab-content">
+            <section class="py-12 bg-white">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- About Header -->
+                    <div class="text-center mb-12">
+                        <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-extrabold text-brand-dark">Tentang rapresepnich</h2>
+                        <p class="text-gray-500 text-sm mt-2 max-w-xl mx-auto">Platform resep masakan tempat berbagi inspirasi kuliner rumahan hingga resep kekinian tahun 2026.</p>
+                    </div>
+
+                    <!-- Story & Vision Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        <div class="bg-brand-50 p-6 sm:p-8 rounded-3xl border border-orange-100">
+                            <h3 class="font-serif text-xl font-bold text-brand-dark mb-3"><i class="fa-solid fa-book-open text-brand-500 mr-2"></i> Kisah Dibalik Website</h3>
+                            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                                Situs <strong>rapresepnich</strong> dibangun dari kecintaan mendalam terhadap dunia seni kuliner dan keinginan untuk menyajikan resep makanan yang tidak hanya lezat, tetapi juga praktis dan mengikuti perkembangan tren media sosial masa kini.
+                            </p>
+                            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed mt-3">
+                                Kami menyaring resep-resep viral dari berbagai penjuru dunia agar bisa dimasak dengan mudah di dapur rumah Anda tanpa perlu peralatan rumit.
+                            </p>
+                        </div>
+
+                        <div class="bg-brand-dark text-white p-6 sm:p-8 rounded-3xl shadow-lg">
+                            <h3 class="font-serif text-xl font-bold text-orange-400 mb-3"><i class="fa-solid fa-compass text-orange-400 mr-2"></i> Misi & Visi Kami</h3>
+                            <ul class="space-y-3 text-xs sm:text-sm text-gray-300">
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-brand-500 mt-1"></i>
+                                    <span>Menyediakan panduan resep yang akurat, teruji, dan dijamin anti-gagal.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-brand-500 mt-1"></i>
+                                    <span>Mengedukasi masyarakat mengenai kreasi menu viral 2026 secara gratis.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-brand-500 mt-1"></i>
+                                    <span>Membangun komunitas pencinta masak yang saling menginspirasi.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contact & Feedback Form -->
+                    <div class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                        <h3 class="font-serif text-xl font-bold text-gray-900 mb-2">Kirim Saran & Pertanyaan</h3>
+                        <p class="text-xs text-gray-500 mb-6">Punya saran resep viral terbaru yang ingin dicoba? Kirimkan pesanmu di bawah ini.</p>
+                        
+                        <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+                                    <input type="text" required placeholder="Contoh: Chef Budi" class="w-full border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Email</label>
+                                    <input type="email" required placeholder="nama@email.com" class="w-full border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Pesan / Request Resep</label>
+                                <textarea rows="3" required placeholder="Tuliskan pesan atau ide resep di sini..." class="w-full border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brand-500"></textarea>
+                            </div>
+                            <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-md">
+                                Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- GUTENBERG CODE SNIPPET PANEL (For WordPress Users) -->
+        <section id="gutenberg-info" class="bg-gray-900 text-white py-10 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-mono text-brand-500 uppercase tracking-widest"><i class="fa-brands fa-wordpress"></i> Integration Utility</span>
+                        <h3 class="font-serif text-xl sm:text-2xl font-bold">Panduan Kode Gutenberg WordPress</h3>
+                        <p class="text-gray-400 text-xs mt-1">Copy dan paste blok HTML berikut ke dalam "Custom HTML Block" di WordPress Gutenberg Editor Anda.</p>
+                    </div>
+                    <button onclick="copyGutenbergCode()" class="bg-brand-500 hover:bg-brand-600 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center justify-center gap-2 transition shrink-0">
+                        <i class="fa-regular fa-copy"></i> Copy Gutenberg Block HTML
+                    </button>
+                </div>
+
+                <div class="relative bg-gray-950 p-4 rounded-2xl border border-gray-800 font-mono text-xs text-gray-300 overflow-x-auto">
+                    <pre id="gutenberg-code-content">
+&lt;!-- wp:group {"className":"rapresepnich-card","layout":{"type":"constrained"}} --&gt;
+&lt;div class="wp-block-group rapresepnich-card" style="background:#fdfbf7; padding:20px; border-radius:16px; border:1px solid #feecdc;"&gt;
+    &lt;!-- wp:heading {"level":3} --&gt;
+    &lt;h3 style="color:#1c1917; font-family:'Playfair Display', serif;"&gt;Cromboloni Matcha Cheese 2026&lt;/h3&gt;
+    &lt;!-- /wp:heading --&gt;
+
+    &lt;!-- wp:paragraph --&gt;
+    &lt;p style="color:#4b5563; font-size:14px;"&gt;Sajian pastry renyah dengan isian matcha kyoto lumer buatan rapresepnich.&lt;/p&gt;
+    &lt;!-- /wp:paragraph --&gt;
+
+    &lt;!-- wp:button {"backgroundColor":"orange"} --&gt;
+    &lt;div class="wp-block-button"&gt;
+        &lt;a class="wp-block-button__link bg-orange-500" style="background-color:#ea580c; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:12px;" href="#"&gt;
+            Lihat Resep Lengkap
+        &lt;/a&gt;
+    &lt;/div&gt;
+    &lt;!-- /wp:button --&gt;
+&lt;/div&gt;
+&lt;!-- /wp:group --&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-gray-400 py-8 border-t border-gray-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 bg-brand-500 text-white rounded-lg flex items-center justify-center font-bold text-sm">R</div>
+                <span class="font-serif font-bold text-white text-base">rapresepnich</span>
+            </div>
+            <p>© 2026 rapresepnich. Hak Cipta Dilindungi Undang-Undang. Hak Cipta Portal Kuliner Viral.</p>
+            <div class="flex space-x-4 text-base">
+                <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- RECIPE MODAL POPUP -->
+    <div id="recipe-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 sm:p-8 border border-gray-100">
+            <button onclick="closeRecipeModal()" class="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+                ✕
+            </button>
+            <div id="modal-body-content">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Recipe Database Mock Data
+        const recipesData = {
+            'cromboloni': {
+                title: 'Cromboloni Matcha Cheese 2026',
+                prepTime: '30 Menit',
+                servings: '4 Porsi',
+                category: 'Dessert Viral',
+                image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '1 lembar Puff Pastry siap pakai',
+                    '150 gr Whipping Cream',
+                    '2 sdm Bubuk Matcha Jepang murni',
+                    '50 gr Cream Cheese, suhu ruang',
+                    '3 sdm Kental manis',
+                    'Kacang pistachio cincang untuk topping'
+                ],
+                steps: [
+                    'Potong puff pastry memanjang, gulung hingga membentuk lingkaran tebal.',
+                    'Panggang dalam ring cutter di suhu 200°C selama 20-25 menit hingga mengembang renyah.',
+                    'Kocok whipping cream, cream cheese, matcha, dan kental manis hingga halus.',
+                    'Lubangi bagian atas cromboloni yang sudah dingin, semprotkan matcha cream.',
+                    'Beri lelehan matcha cair dan taburan pistachio di atasnya.'
+                ]
+            },
+            'coffee': {
+                title: 'Iced Coffee Cloud Foam Sea Salt',
+                prepTime: '10 Menit',
+                servings: '1 Gelas',
+                category: 'Minuman Viral',
+                image: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '2 shot Espresso panas (atau Kopi Hitam Pekat)',
+                    '150 ml Susu Oat / Susu Segar',
+                    '50 ml Heavy Cream',
+                    '1/4 sdt Sea Salt (Garam Laut)',
+                    '1 sdm Sirup Karamel',
+                    'Es batu secukupnya'
+                ],
+                steps: [
+                    'Kocok heavy cream, sirup karamel, dan sea salt menggunakan milk frother hingga jadi busa tebal (cloud foam).',
+                    'Isi gelas dengan es batu secukupnya dan tuang susu oat.',
+                    'Tuangkan espresso perlahan.',
+                    'Sendokkan cloud foam di bagian paling atas kopi. Siap dinikmati!'
+                ]
+            },
+            'mochi': {
+                title: 'Mochi Milk Tea Crunch',
+                prepTime: '15 Menit',
+                servings: '2 Gelas',
+                category: 'Minuman Sweet',
+                image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '200 ml Milk Tea Ceylon dingin',
+                    '50 gr Tepung Ketan (untuk adonan mochi)',
+                    '100 ml Air + 1 sdm Gula',
+                    'Biskuit karamel diremukkan',
+                    'Bobba gula aren'
+                ],
+                steps: [
+                    'Campur tepung ketan, air, dan gula. Kukus 10 menit lalu uleni hingga kenyal lunak.',
+                    'Siapkan gelas, masukan bobba gula aren.',
+                    'Tuang Milk Tea dingin.',
+                    'Taruh mochi lembut di atas permukaan gelas dan taburi renyahnya biskuit karamel.'
+                ]
+            },
+            'burger': {
+                title: 'Smash Burger Lava Truffle',
+                prepTime: '20 Menit',
+                servings: '2 Burger',
+                category: 'Makanan Berat',
+                image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '200 gr Daging Sapi Cincang berlemak',
+                    '2 Roti Brioche Burger Bun',
+                    '4 lembar Keju Cheddar',
+                    '2 sdm Minyak Truffle',
+                    'Saus Keju Lava buatan sendiri',
+                    'Garam & Lada hitam secukupnya'
+                ],
+                steps: [
+                    'Bentuk daging menjadi bola-bola bundar.',
+                    'Gepengkan (smash) daging di wajan besi super panas hingga bagian pinggirnya renyah krispi.',
+                    'Bumbui garam & lada, lalu letakkan keju di atasnya hingga meleleh.',
+                    'Panggang roti brioche dengan mentega.',
+                    'Tumpuk burger dan siram dengan saus keju lava bercita rasa truffle.'
+                ]
+            },
+            'souffle': {
+                title: 'Souffle Pancake Rose Gold',
+                prepTime: '25 Menit',
+                servings: '2 Porsi',
+                category: 'Dessert',
+                image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '2 Kuning telur + 3 Putih telur',
+                    '30 ml Susu cair',
+                    '35 gr Tepung terigu protein rendah',
+                    '30 gr Gula pasir',
+                    'Sirup rasa mawar & edible gold leaf'
+                ],
+                steps: [
+                    'Kocok kuning telur, susu, dan tepung hingga rata.',
+                    'Kocok putih telur dan gula pasir hingga stiff peak (kaku).',
+                    'Campur kedua adonan perlahan agar tidak kempes.',
+                    'Masak di pan anti lengket dengan api sangat kecil dan sedikit air, tutup pan 5-6 menit.',
+                    'Sajikan dengan siraman sirup mawar dan hiasan emas edible.'
+                ]
+            },
+            'ramen': {
+                title: 'Spicy Carbonara Ramen Roll',
+                prepTime: '15 Menit',
+                servings: '2 Porsi',
+                category: 'Makanan Ringan',
+                image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    '1 bungkus Samyang / Ramen pedas instan',
+                    '5 lembar Rice Paper',
+                    '50 ml Susu evaporated + 1 sdm keju parut',
+                    'Keju Mozarella batang'
+                ],
+                steps: [
+                    'Rebus ramen pedas lalu campur dengan bumbunya dan susu cair.',
+                    'Basahi rice paper dengan air hangat.',
+                    'Isi rice paper dengan ramen pedas dan potongan keju mozarella.',
+                    'Gulung rapi dan panggang sebentar di teflon agar kulitnya garing renyah.'
+                ]
+            }
+        };
+
+        // Tab Switching Logic with Smooth Animation
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const navBtns = document.querySelectorAll('.nav-btn');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            navBtns.forEach(btn => {
+                btn.classList.remove('bg-brand-500', 'text-white', 'shadow-md', 'shadow-brand-500/20');
+                btn.classList.add('text-gray-600');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+
+            const activeNavBtn = document.getElementById(`nav-${tabId}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove('text-gray-600');
+                activeNavBtn.classList.add('bg-brand-500', 'text-white', 'shadow-md', 'shadow-brand-500/20');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Open Recipe Modal
+        function openRecipeModal(key) {
+            const recipe = recipesData[key] || recipesData['cromboloni'];
+            const modal = document.getElementById('recipe-modal');
+            const modalBody = document.getElementById('modal-body-content');
+
+            modalBody.innerHTML = `
+                <div class="relative h-60 rounded-2xl overflow-hidden mb-5">
+                    <img src="${recipe.image}" class="w-full h-full object-cover" alt="${recipe.title}">
+                    <span class="absolute top-3 left-3 bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">${recipe.category}</span>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-gray-900 mb-2">${recipe.title}</h3>
+                <div class="flex space-x-4 text-xs text-gray-500 mb-6">
+                    <span><i class="fa-regular fa-clock text-brand-500 mr-1"></i> Waktu: ${recipe.prepTime}</span>
+                    <span><i class="fa-solid fa-users text-brand-500 mr-1"></i> ${recipe.servings}</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-900 mb-2 pb-1 border-b border-orange-100"><i class="fa-solid fa-basket-shopping text-brand-500 mr-1"></i> Bahan-bahan:</h4>
+                        <ul class="space-y-1.5 text-xs text-gray-600">
+                            ${recipe.ingredients.map(ing => `<li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-[10px] text-brand-500"></i> ${ing}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-900 mb-2 pb-1 border-b border-orange-100"><i class="fa-solid fa-list-ol text-brand-500 mr-1"></i> Langkah Membuat:</h4>
+                        <ol class="space-y-2 text-xs text-gray-600 list-decimal list-inside">
+                            ${recipe.steps.map(step => `<li class="leading-relaxed">${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        // Close Recipe Modal
+        function closeRecipeModal() {
+            document.getElementById('recipe-modal').classList.add('hidden');
+        }
+
+        // Filter Recipes on Recipe Page
+        function filterRecipes() {
+            const query = document.getElementById('recipe-search').value.toLowerCase();
+            const cards = document.querySelectorAll('.recipe-card');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Search Tag Action
+        function searchTag(tag) {
+            switchTab('resep');
+            const searchInput = document.getElementById('recipe-search');
+            if (searchInput) {
+                searchInput.value = tag;
+                filterRecipes();
+            }
+        }
+
+        // Search Action from Home
+        function handleHomeSearch() {
+            const query = document.getElementById('home-search-input').value;
+            switchTab('resep');
+            const searchInput = document.getElementById('recipe-search');
+            if (searchInput) {
+                searchInput.value = query;
+                filterRecipes();
+            }
+        }
+
+        // Filter Categories
+        function filterCategory(cat) {
+            const btns = document.querySelectorAll('.cat-filter-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('bg-brand-500', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
+            });
+
+            event.currentTarget.classList.remove('bg-white', 'text-gray-700');
+            event.currentTarget.classList.add('bg-brand-500', 'text-white');
+
+            const items = document.querySelectorAll('.cat-card');
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                if (cat === 'all' || itemCat.includes(cat)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Form Submit Handler
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            alert("Terima kasih! Pesan dan saran resep Anda telah berhasil terkirim ke rapresepnich.");
+            e.target.reset();
+        }
+
+        // Copy Gutenberg Code
+        function copyGutenbergCode() {
+            const codeText = document.getElementById('gutenberg-code-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            
+            alert('Kode Gutenberg Block berhasil di-copy ke clipboard! Silakan paste pada Custom HTML Block di editor WordPress Anda.');
+        }
+    </script>
+</body>
+</html>
+```
